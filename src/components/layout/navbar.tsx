@@ -2,21 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   MagnifyingGlassIcon,
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
+import { SearchPopover } from "@/components/custom/SearchPopover";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Searching for:", searchQuery);
-  };
+  const router = useRouter();
 
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50">
@@ -30,17 +27,17 @@ export function Navbar() {
             </Link>
           </div>
 
+          {/* Desktop Navigation */}
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
-            <form onSubmit={handleSearch} className="relative">
-              <input
-                type="text"
-                placeholder="Search videos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64 pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </form>
+            <SearchPopover />
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/watch/myList")}
+            >
+              My Watch List
+            </Button>
           </div>
 
           <div className="flex items-center sm:hidden">
@@ -63,19 +60,24 @@ export function Navbar() {
 
       {isMenuOpen && (
         <div className="sm:hidden">
-          <div className="pt-4 pb-3 border-t border-gray-200">
-            <form onSubmit={handleSearch} className="px-4">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search videos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
-            </form>
+          <div className="pt-4 pb-3 border-t border-gray-200 space-y-3">
+            <div className="px-4">
+              <SearchPopover />
+            </div>
+
+            <div className="px-4">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => {
+                  router.push("/watch/myList");
+                  setIsMenuOpen(false);
+                }}
+              >
+                My Watch List
+              </Button>
+            </div>
           </div>
         </div>
       )}
