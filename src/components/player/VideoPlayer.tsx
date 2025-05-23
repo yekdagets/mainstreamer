@@ -227,13 +227,19 @@ export function VideoPlayer({ video }: VideoPlayerProps) {
     setPlayed(parseFloat(e.target.value));
   };
 
-  const handleSeekMouseDown = () => {
+  const handleSeekStart = () => {
     setSeeking(true);
   };
 
-  const handleSeekMouseUp = (e: React.MouseEvent<HTMLInputElement>) => {
+  const handleSeekEnd = (
+    e:
+      | React.MouseEvent<HTMLInputElement>
+      | React.TouchEvent<HTMLInputElement>
+      | React.PointerEvent<HTMLInputElement>
+  ) => {
     setSeeking(false);
-    playerRef.current?.seekTo(parseFloat((e.target as HTMLInputElement).value));
+    const value = parseFloat((e.target as HTMLInputElement).value);
+    playerRef.current?.seekTo(value);
   };
 
   const handleRewind = () => {
@@ -403,9 +409,13 @@ export function VideoPlayer({ video }: VideoPlayerProps) {
             max={0.999999}
             step="any"
             value={played}
-            onMouseDown={handleSeekMouseDown}
+            onMouseDown={handleSeekStart}
+            onTouchStart={handleSeekStart}
+            onPointerDown={handleSeekStart}
             onChange={handleSeekChange}
-            onMouseUp={handleSeekMouseUp}
+            onMouseUp={handleSeekEnd}
+            onTouchEnd={handleSeekEnd}
+            onPointerUp={handleSeekEnd}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           />
           <div
@@ -488,6 +498,8 @@ export function VideoPlayer({ video }: VideoPlayerProps) {
                     onChange={(e) =>
                       handleVolumeChange(parseFloat(e.target.value))
                     }
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onTouchEnd={(e) => e.stopPropagation()}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                   <div
