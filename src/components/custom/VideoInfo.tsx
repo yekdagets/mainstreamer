@@ -41,16 +41,16 @@ export function VideoInfo({ video }: VideoInfoProps) {
           </Button>
         </div>
 
-        <div className="flex items-center space-x-2 mt-4 md:mt-0">
-          <div className="text-sm text-gray-500">
+        <div className="mt-3 md:mt-0 md:flex md:items-center md:space-x-4">
+          <div className="text-sm text-gray-500 mb-3 md:mb-0">
             {formatViews(video.views)} • {formatUploadDate(video.uploadDate)}
           </div>
 
-          <div className="flex space-x-1">
+          <div className="flex flex-wrap gap-2">
             {video.tags.map((tag) => (
               <span
                 key={tag}
-                className={`text-xs px-3 py-1.5 rounded-full inline-block mb-1.5 mr-1.5 ${getRandomTagColor()}`}
+                className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all duration-200 hover:scale-105 ${getRandomTagColor()}`}
               >
                 {tag}
               </span>
