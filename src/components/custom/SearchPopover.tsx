@@ -6,11 +6,14 @@ import { Video } from "@/types/Video";
 import { useRouter } from "next/navigation";
 import { useOnClickOutside } from "@/hooks/useOnClickOutside";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { Loading } from "@/components/ui/loading";
 
 export function SearchPopover() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Video[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+
   const router = useRouter();
   const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -21,12 +24,18 @@ export function SearchPopover() {
     setQuery(value);
 
     if (value.trim().length > 2) {
-      const searchResults = searchVideos(value);
-      setResults(searchResults.slice(0, 5));
+      setIsSearching(true);
       setIsOpen(true);
+
+      setTimeout(() => {
+        const searchResults = searchVideos(value);
+        setResults(searchResults.slice(0, 5));
+        setIsSearching(false);
+      }, 300);
     } else {
       setResults([]);
       setIsOpen(false);
+      setIsSearching(false);
     }
   };
 
@@ -61,7 +70,15 @@ export function SearchPopover() {
         <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
       </form>
 
-      {isOpen && results.length > 0 && (
+      {isOpen && isSearching && (
+        <div className="absolute z-10 mt-2 w-96 bg-white rounded-md shadow-lg overflow-hidden border">
+          <div className="p-6 text-center">
+            <Loading variant="dots" text="Searching videos..." />
+          </div>
+        </div>
+      )}
+
+      {isOpen && !isSearching && results.length > 0 && (
         <div className="absolute z-10 mt-2 w-96 bg-white rounded-md shadow-lg overflow-hidden border">
           <div className="max-h-96 overflow-y-auto">
             {results.map((video) => (
@@ -102,13 +119,16 @@ export function SearchPopover() {
         </div>
       )}
 
-      {isOpen && query.trim().length > 2 && results.length === 0 && (
-        <div className="absolute z-10 mt-2 w-96 bg-white rounded-md shadow-lg overflow-hidden border">
-          <div className="p-4 text-center text-gray-500">
-            <p className="text-sm">No videos found for "{query}"</p>
+      {isOpen &&
+        !isSearching &&
+        query.trim().length > 2 &&
+        results.length === 0 && (
+          <div className="absolute z-10 mt-2 w-96 bg-white rounded-md shadow-lg overflow-hidden border">
+            <div className="p-4 text-center text-gray-500">
+              <p className="text-sm">No videos found for "{query}"</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
