@@ -14,15 +14,25 @@ export const getRelatedVideos = (
 
   return videos
     .filter((video) => video.id !== videoId)
-    .sort((a, b) => {
-      const aMatchCount =
-        a.tags.filter((tag) => currentVideo.tags.includes(tag)).length +
-        (a.category === currentVideo.category ? 3 : 0);
-      const bMatchCount =
-        b.tags.filter((tag) => currentVideo.tags.includes(tag)).length +
-        (b.category === currentVideo.category ? 3 : 0);
-      return bMatchCount - aMatchCount;
+    .map((video) => {
+      const tagMatchScore =
+        video.tags.filter((tag) => currentVideo.tags.includes(tag)).length * 2;
+
+      const categoryMatchScore =
+        video.category === currentVideo.category ? 3 : 0;
+
+      const creatorMatchScore =
+        video.creator.id === currentVideo.creator.id ? 4 : 0;
+
+      const totalScore = tagMatchScore + categoryMatchScore + creatorMatchScore;
+
+      return {
+        video,
+        score: totalScore,
+      };
     })
+    .sort((a, b) => b.score - a.score)
+    .map((item) => item.video)
     .slice(0, limit);
 };
 

@@ -168,4 +168,88 @@ export const videos: Video[] = [
     tags: ["volkswagen", "gti", "cars", "review"],
     category: "Automotive",
   },
+  {
+    id: "9",
+    title: "Amsterdam",
+    description:
+      "Tears of Steel was realized with crowd-funding by users of the open source 3D creation tool Blender. Target was to improve and test a complete open and free pipeline for visual effects in film - and to make a compelling sci-fi film in Amsterdam, the Netherlands.",
+    thumbnailUrl:
+      "https://storage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg",
+    videoUrl:
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+    duration: 734,
+    views: 1230000,
+    uploadDate: "2023-01-05",
+    creator: {
+      id: "c1",
+      name: "Blender Foundation",
+      avatarUrl: "https://randomuser.me/api/portraits/men/44.jpg",
+      subscribers: 500000,
+    },
+    tags: ["sci-fi", "visual effects", "amsterdam", "blender"],
+    category: "Movies",
+  },
+  {
+    id: "10",
+    title: "We Are Going On Bullrun",
+    description:
+      "The Smoking Tire is going on the 2010 Bullrun Live Rally in a 2011 Shelby GT500, and posting a video from the road every single day! The only place to watch them is by subscribing to The Smoking Tire or watching at BlackMagicShine.com",
+    thumbnailUrl:
+      "https://storage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg",
+    videoUrl:
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+    duration: 86,
+    views: 525000,
+    uploadDate: "2023-02-18",
+    creator: {
+      id: "c3",
+      name: "Garage419",
+      avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+      subscribers: 420000,
+    },
+    tags: ["bullrun", "shelby", "rally", "cars"],
+    category: "Automotive",
+  },
+  {
+    id: "11",
+    title: "What Car Can You Get For A Grand",
+    description:
+      "The Smoking Tire meets up with Chris and Jorge from CarsForAGrand.com to see just how far $1,000 can go when looking for a car.The Smoking Tire meets up with Chris and Jorge from CarsForAGrand.com to see just how far $1,000 can go when looking for a car.",
+    thumbnailUrl:
+      "https://storage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg",
+    videoUrl:
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4",
+    duration: 315,
+    views: 880000,
+    uploadDate: "2023-03-20",
+    creator: {
+      id: "c3",
+      name: "Garage419",
+      avatarUrl: "https://randomuser.me/api/portraits/men/67.jpg",
+      subscribers: 420000,
+    },
+    tags: ["budget", "car buying", "cheap cars", "tips"],
+    category: "Automotive",
+  },
+  {
+    id: "12",
+    title: "For Bigger Fun",
+    description:
+      "Introducing Chromecast. The easiest way to enjoy online video and music on your TV. For $35.  Find out more at google.com/chromecast.",
+    thumbnailUrl:
+      "https://storage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
+    videoUrl:
+      "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    duration: 60,
+    views: 1450000,
+    uploadDate: "2023-04-05",
+    creator: {
+      id: "c2",
+      name: "Google",
+      avatarUrl: "https://randomuser.me/api/portraits/women/65.jpg",
+      subscribers: 10200000,
+    },
+    tags: ["chromecast", "google", "streaming", "tv"],
+    category: "Technology",
+  },
 ];
