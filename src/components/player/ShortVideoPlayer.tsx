@@ -24,13 +24,16 @@ export function ShortVideoPlayer({
   const [duration, setDuration] = useState(0);
   const [seeking, setSeeking] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [canPlay, setCanPlay] = useState(false);
 
   const playerRef = useRef<ReactPlayer>(null);
   const router = useRouter();
 
   useEffect(() => {
-    if (isActive) {
-      setIsPlaying(true);
+    if (isActive && canPlay) {
+      setTimeout(() => {
+        setIsPlaying(true);
+      }, 100);
       setPlayed(0);
       setCurrentTime(0);
       if (playerRef.current) {
@@ -40,25 +43,56 @@ export function ShortVideoPlayer({
       setIsPlaying(false);
       setPlayed(0);
       setCurrentTime(0);
+
       if (playerRef.current) {
+        const internalPlayer = playerRef.current.getInternalPlayer();
+        if (internalPlayer) {
+          if (internalPlayer.pause) {
+            internalPlayer.pause();
+          }
+          if (internalPlayer.currentTime !== undefined) {
+            internalPlayer.currentTime = 0;
+          }
+          internalPlayer.volume = 0;
+          internalPlayer.muted = true;
+        }
         playerRef.current.seekTo(0);
       }
     }
-  }, [isActive]);
+  }, [isActive, canPlay]);
 
   useEffect(() => {
-    if (playerRef.current && playerRef.current.getInternalPlayer()) {
+    if (playerRef.current) {
       const internalPlayer = playerRef.current.getInternalPlayer();
-      if (internalPlayer && internalPlayer.volume !== undefined) {
-        internalPlayer.volume = isActive ? 0.8 : 0;
-        internalPlayer.muted = !isActive;
+      if (internalPlayer) {
+        if (isActive) {
+          internalPlayer.volume = 0.8;
+          internalPlayer.muted = false;
+        } else {
+          internalPlayer.volume = 0;
+          internalPlayer.muted = true;
+          if (internalPlayer.pause) {
+            internalPlayer.pause();
+          }
+        }
       }
     }
-  }, [isActive]);
+  }, [isActive, isPlaying]);
 
-  const togglePlay = () => {
+  const togglePlay = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (!isActive) return;
-    setIsPlaying(!isPlaying);
+
+    if (!canPlay) {
+      setCanPlay(true);
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(!isPlaying);
+    }
   };
 
   const handleProgress = (state: { played: number; playedSeconds: number }) => {
@@ -123,6 +157,17 @@ export function ShortVideoPlayer({
     onVideoEnd?.();
   };
 
+  const handleReady = () => {
+    if (isActive) {
+      setCanPlay(true);
+    }
+  };
+
+  const handleError = (error: any) => {
+    console.log("Video error:", error);
+    setCanPlay(false);
+  };
+
   const maxDuration = Math.min(duration, 10);
   const displayTime = Math.min(currentTime, 10);
   const displayPlayed = maxDuration > 0 ? displayTime / maxDuration : 0;
@@ -143,34 +188,45 @@ export function ShortVideoPlayer({
           url={video.videoUrl}
           width="100%"
           height="100%"
-          playing={isPlaying && isActive}
+          playing={isPlaying && isActive && canPlay}
           volume={isActive ? 0.8 : 0}
           muted={!isActive}
           onProgress={handleProgress}
           onDuration={setDuration}
           onEnded={handleVideoEnd}
+          onReady={handleReady}
+          onError={handleError}
           style={{ position: "absolute", top: 0, left: 0 }}
           config={{
             file: {
               attributes: {
                 onContextMenu: (e: React.MouseEvent) => e.preventDefault(),
+                controlsList: "nodownload nofullscreen noremoteplayback",
+                disablePictureInPicture: true,
+                playsInline: true,
+                webkit_playsinline: "true",
               },
             },
           }}
         />
 
-        {!isPlaying && isActive && (
-          <div className="absolute inset-0 flex items-center justify-center">
+        {(!isPlaying || !canPlay) && isActive && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20">
             <Button
               variant="player"
-              className="bg-black/60 h-16 w-16"
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePlay();
-              }}
+              className="bg-black/60 h-16 w-16 hover:bg-black/80 transition-colors"
+              onClick={togglePlay}
             >
               <PlayIcon className="h-8 w-8" />
             </Button>
+          </div>
+        )}
+
+        {!canPlay && isActive && (
+          <div className="absolute top-4 left-4 right-4 text-center">
+            <p className="text-white text-sm bg-black/50 px-3 py-1 rounded-full">
+              Tap to play
+            </p>
           </div>
         )}
       </div>
