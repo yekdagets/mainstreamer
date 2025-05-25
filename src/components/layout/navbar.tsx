@@ -27,7 +27,6 @@ export function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
           <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
             <SearchPopover />
 

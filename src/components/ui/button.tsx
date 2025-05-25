@@ -38,7 +38,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       outline: "border border-gray-300 hover:bg-gray-100 rounded-md",
       ghost: "hover:bg-gray-100 rounded-md",
       link: "underline-offset-4 hover:underline text-blue-600",
-      player: "text-white bg-transparent hover:bg-white/20 rounded-full", // Video player butonları için
+      player: "text-white bg-transparent hover:bg-white/20 rounded-full",
     };
 
     const sizes = {
@@ -46,7 +46,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       md: "h-10 py-2 px-4",
       lg: "h-11 px-8",
       icon: "h-10 w-10",
-      player: "flex items-center justify-center", // Player butonları için özel boyut
+      player: "flex items-center justify-center",
     };
 
     return (

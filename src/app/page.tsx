@@ -9,10 +9,13 @@ import { Loading } from "@/components/ui/loading";
 import { VideoSection } from "@/components/custom/VideoSection";
 import { CategoryTabs } from "@/components/custom/CategoryTabs";
 import { PageTransition } from "@/components/layout/PageTransition";
+import { DiscoverButton } from "@/components/custom/DiscoverButton";
+import { DiscoverPanel } from "@/components/custom/DiscoverPanel";
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDiscoveryPanel, setShowDiscoveryPanel] = useState(false);
 
   const allPopularVideos = getPopularVideos();
   const allRecentVideos = getRecentVideos();
@@ -24,6 +27,18 @@ export default function Home() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (showDiscoveryPanel) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [showDiscoveryPanel]);
 
   const filteredPopularVideos = useMemo(() => {
     const categoryVideos = getVideosByCategory(activeCategory);
@@ -39,6 +54,10 @@ export default function Home() {
     );
   }, [allRecentVideos, activeCategory]);
 
+  const handleDiscoveryToggle = () => {
+    setShowDiscoveryPanel(!showDiscoveryPanel);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -52,98 +71,126 @@ export default function Home() {
 
   return (
     <PageTransition>
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          className="mb-8"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
+      <div className="relative">
+        <div
+          className={`transition-all duration-300 ${
+            showDiscoveryPanel ? "mr-[33.333333%]" : ""
+          }`}
         >
-          <h1 className="text-3xl font-bold mb-2">
-            {activeCategory ? `${activeCategory} Videos` : "Discover Videos"}
-          </h1>
-          <p className="text-gray-600">
-            {activeCategory
-              ? `Explore the best ${activeCategory.toLowerCase()} content`
-              : "Watch the latest and most popular videos"}
-          </p>
-        </motion.div>
+          <div className="container mx-auto px-4 py-8 relative">
+            <DiscoverButton onDesktopClick={handleDiscoveryToggle} />
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.2 }}
-        >
-          <CategoryTabs
-            activeCategory={activeCategory}
-            onCategoryChange={setActiveCategory}
-            showCounts={true}
-          />
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
-        >
-          {filteredPopularVideos.length > 0 && (
-            <VideoSection
-              title={
-                activeCategory ? `Popular ${activeCategory}` : "Popular Videos"
-              }
-              videos={filteredPopularVideos}
-            />
-          )}
-
-          {filteredRecentVideos.length > 0 && (
-            <VideoSection
-              title={
-                activeCategory ? `Recent ${activeCategory}` : "Recent Videos"
-              }
-              videos={filteredRecentVideos}
-            />
-          )}
-        </motion.div>
-
-        {filteredPopularVideos.length === 0 &&
-          filteredRecentVideos.length === 0 &&
-          activeCategory && (
             <motion.div
-              className="text-center py-16"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
+              className="mb-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
             >
-              <div className="mb-4">
-                <svg
-                  className="h-16 w-16 text-gray-300 mx-auto"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No {activeCategory} videos found
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Try selecting a different category or browse all videos.
+              <h1 className="text-3xl font-bold mb-2">
+                {activeCategory
+                  ? `${activeCategory} Videos`
+                  : "Discover Videos"}
+              </h1>
+              <p className="text-gray-600">
+                {activeCategory
+                  ? `Explore the best ${activeCategory.toLowerCase()} content`
+                  : "Watch the latest and most popular videos"}
               </p>
-              <Button
-                variant="ghost"
-                onClick={() => setActiveCategory(null)}
-                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-              >
-                Show all videos
-              </Button>
             </motion.div>
-          )}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+            >
+              <CategoryTabs
+                activeCategory={activeCategory}
+                onCategoryChange={setActiveCategory}
+                showCounts={true}
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+            >
+              {filteredPopularVideos.length > 0 && (
+                <VideoSection
+                  title={
+                    activeCategory
+                      ? `Popular ${activeCategory}`
+                      : "Popular Videos"
+                  }
+                  videos={filteredPopularVideos}
+                />
+              )}
+
+              {filteredRecentVideos.length > 0 && (
+                <VideoSection
+                  title={
+                    activeCategory
+                      ? `Recent ${activeCategory}`
+                      : "Recent Videos"
+                  }
+                  videos={filteredRecentVideos}
+                />
+              )}
+            </motion.div>
+
+            {filteredPopularVideos.length === 0 &&
+              filteredRecentVideos.length === 0 &&
+              activeCategory && (
+                <motion.div
+                  className="text-center py-16"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <div className="mb-4">
+                    <svg
+                      className="h-16 w-16 text-gray-300 mx-auto"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2v8a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No {activeCategory} videos found
+                  </h3>
+                  <p className="text-gray-500 mb-6">
+                    Try selecting a different category or browse all videos.
+                  </p>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setActiveCategory(null)}
+                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                  >
+                    Show all videos
+                  </Button>
+                </motion.div>
+              )}
+          </div>
+        </div>
+
+        {showDiscoveryPanel && (
+          <motion.div
+            className="fixed top-0 right-0 w-1/3 h-screen bg-black z-50 border-l border-gray-200"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <DiscoverPanel onClose={() => setShowDiscoveryPanel(false)} />
+          </motion.div>
+        )}
       </div>
     </PageTransition>
   );
